@@ -3,35 +3,59 @@ import axios from "axios";
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/", validateReviewRequest, async (req, res) => {
   try {
-    const { text } = req.body;
+    const { documentText, context } = req.body;
 
+    const systemPrompt = reviewPrompt(context?.jurisdiction);
+
+    // For now we handle talking to robot directly here.
+    // Later we can abstract this to a service layer. (Just like at job)
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
         model: "gpt-4o-mini",
         messages: [
-          {
-            role: "system",
-            content: "You are a legal AI assistant reviewing contracts for issues and improvements."
-          },
-          { role: "user", content: `Review this document:\n${text}` }
+          { role: "system", content: systemPrompt },
+          { role: "user", content: documentText },
         ],
-        temperature: 0.3
+        response_format: { type: "json_object" },
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
 
-    res.json({ review: response.data.choices[0].message.content });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "AI review failed" });
+    const content = response.data.choices?.[0]?.message?.content;
+    const parsed =
+      typeof content === "string" ? JSON.parse(content) : content || {};
+
+    return res.json({
+      success: true,
+      data: {
+        summary: parsed.summary || "",
+        issues: parsed.issues || [],
+        suggestedClauses: parsed.suggestedClauses || [],
+      },
+    });
+  } catch (error) {
+    console.error("OpenAI Review Error:", error.response?.data || error.message);
+
+    if (error.response?.status === 429) {
+      return res.status(429).json({
+        success: false,
+        error: "Rate limit reached. Please try again in a few seconds.",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      error: "AI review failed. Please try again later.",
+      details: error.response?.data || error.message,
+    });
   }
 });
 
