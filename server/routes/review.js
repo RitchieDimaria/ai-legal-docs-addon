@@ -1,6 +1,7 @@
 import express from "express";
 import axios from "axios";
 import validateReviewRequest from "../middleware/validateReviewRequest.js";
+import {reviewPrompt} from "../prompts/reviewPrompt.js";
 
 const router = express.Router();
 
