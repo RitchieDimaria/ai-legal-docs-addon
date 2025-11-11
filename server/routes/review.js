@@ -35,6 +35,7 @@ router.post("/", validateReviewRequest, async (req, res) => {
     const parsed =
       typeof content === "string" ? JSON.parse(content) : content || {};
 
+      console.log(parsed.suggestedClauses)
     return res.json({
       success: true,
       data: {
