@@ -1,22 +1,17 @@
 import express from "express";
-import validateReviewRequest from "../middleware/validateReviewRequest.js";
-import { reviewPrompt } from "../prompts/reviewPrompt.js";
+import { extractContextPrompt } from "../prompts/extractContextPrompt";
 import { fetchOpenAIChat } from "../services/openaiService.js";
 
 const router = express.Router();
 
-router.post("/", validateReviewRequest, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { documentText, context } = req.body;
+    const { documentText } = req.body;
 
-    const systemPrompt = reviewPrompt(context?.jurisdiction);
-
-    // For now we handle talking to robot directly here.
-    // Later we can abstract this to a service layer. (Just like at job)
 
     const parsed = await fetchOpenAIChat({
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "system", content: extractContextPrompt },
         { role: "user", content: documentText },
       ],
       model: "gpt-4o-mini",
