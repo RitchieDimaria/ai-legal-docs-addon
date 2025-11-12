@@ -1,5 +1,5 @@
 import express from "express";
-import { extractContextPrompt } from "../prompts/extractContextPrompt";
+import { extractContextPrompt } from "../prompts/extractContextPrompt.js";
 import { fetchOpenAIChat } from "../services/openaiService.js";
 
 const router = express.Router();
@@ -8,10 +8,11 @@ router.post("/", async (req, res) => {
   try {
     const { documentText } = req.body;
 
+    const systemPrompt = extractContextPrompt();
 
     const parsed = await fetchOpenAIChat({
       messages: [
-        { role: "system", content: extractContextPrompt },
+        { role: "system", content: systemPrompt },
         { role: "user", content: documentText },
       ],
       model: "gpt-4o-mini",
