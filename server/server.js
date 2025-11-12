@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import reviewRouter from "./routes/review.js";
+import extractRouter from "./routes/extractContext.js";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/review", reviewRouter);
+app.use("/api/review", extractRouter);
 
 app.get("/ping", (req, res) => {
     res.status(200).send("pong");

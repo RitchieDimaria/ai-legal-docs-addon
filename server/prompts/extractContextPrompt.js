@@ -1,4 +1,4 @@
-export const extractContextPrompt = (text) => `
+export const extractContextPrompt = `
 You are a legal document parser. Extract the following structured information from the document:
 
 1. Defined Terms (pattern: “Term” means …)
@@ -7,6 +7,4 @@ You are a legal document parser. Extract the following structured information fr
 4. Governing Law / Jurisdiction
 
 Output as JSON.
-Document:
-${text}
 `;
