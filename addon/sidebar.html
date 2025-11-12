@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= HtmlService.createHtmlOutputFromFile('sidebar_css').getContent(); ?>
+  </head>
+  <body>
+    <h2>AI Legal Assistant</h2>
+
+    <?!= HtmlService.createHtmlOutputFromFile('components/context_panel').getContent(); ?>
+
+    <button id="reviewBtn">Run AI Review</button>
+
+    <div id="reviewOutput"></div>
+
+    <?!= HtmlService.createHtmlOutputFromFile('sidebar_js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('utils_js').getContent(); ?>
+  </body>
+</html>

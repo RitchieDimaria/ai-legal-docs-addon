@@ -1,0 +1,50 @@
+<div class="card">
+  <h2 class="card-title">Document Context</h2>
+  <button class="refresh-btn" onclick="refreshContext()">Refresh Context</button>
+
+  <div id="context-results" class="context-results">
+    <p><em>Loading context...</em></p>
+  </div>
+
+  <button class="ai-btn" onclick="refineWithAI()">✨ Refine with AI</button>
+</div>
+
+<script>
+  async function refreshContext() {
+    document.getElementById('context-results').innerHTML = "<p>Parsing...</p>";
+    try {
+      const context = await google.script.run.withSuccessHandler(renderContext).runExtractContext();
+    } catch (err) {
+      document.getElementById('context-results').innerHTML = `<p>Error: ${err}</p>`;
+    }
+  }
+
+  function renderContext(context) {
+    let html = "";
+
+    html += "<h3>Defined Terms</h3>";
+    if (context.definedTerms?.length) {
+      html += "<ul>" + context.definedTerms.map(t => `<li><b>${t.term}</b>: ${t.definition}</li>`).join("") + "</ul>";
+    } else html += "<p>None found</p>";
+
+    html += "<h3>Parties</h3>";
+    html += context.parties
+      ? `<p>${context.parties.partyA} &nbsp;↔&nbsp; ${context.parties.partyB}</p>`
+      : "<p>None detected</p>";
+
+    html += "<h3>Jurisdiction</h3>";
+    html += `<p>${context.jurisdiction || "Not detected"}</p>`;
+
+    html += "<h3>Document Type</h3>";
+    html += `<p>${context.docType || "Unknown"}</p>`;
+
+    document.getElementById('context-results').innerHTML = html;
+  }
+
+  function refineWithAI() {
+    alert("✨ Refine with AI feature coming soon!");
+  }
+
+  // Auto-load context on first open
+  refreshContext();
+</script>

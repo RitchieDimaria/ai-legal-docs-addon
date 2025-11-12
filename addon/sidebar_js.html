@@ -1,0 +1,100 @@
+<script>
+  document.getElementById('reviewBtn').addEventListener('click', () => {
+  const jurisdiction = document.getElementById('jurisdiction').value;
+  const output = document.getElementById('reviewOutput');
+  output.innerHTML = '<p>Running AI review...</p>';
+
+  google.script.run
+    .withSuccessHandler(res => {
+      if (!res || res.success === false) {
+        output.innerHTML = `<p style="color:red;">Error: ${res.error}</p>`;
+        return;
+      }
+      renderResults(res);
+    })
+    .withFailureHandler(err => {
+      output.innerHTML = `<p style="color:red;">${err.message}</p>`;
+    })
+    .runAIReview(jurisdiction);
+});
+
+function renderResults(res) {
+  const output = document.getElementById('reviewOutput');
+  output.innerHTML = '';
+
+  if (res.data) {
+    if (res.data.summary) {
+      const div = document.createElement('div');
+      div.innerHTML = `<h3>Summary</h3><p>${res.data.summary}</p>`;
+      output.appendChild(div);
+    }
+
+
+    if (res.data.issues?.length) {
+      const div = document.createElement('div');
+      div.innerHTML = `<h3>Issues</h3><ul>${res.data.issues.map(i => `<li>${i}</li>`).join('')}</ul>`;
+      output.appendChild(div);
+    }
+
+  console.log("Suggested clauses response:", res.data.suggestedClauses);
+    if (res.data.suggestedClauses?.length) {
+  const div = document.createElement('div');
+  div.innerHTML = `<h3>Suggested Clauses</h3>`;
+
+  res.data.suggestedClauses.forEach((c, i) => {
+    // Card container
+    const clauseDiv = document.createElement('div');
+    clauseDiv.style.border = '1px solid #ddd';
+    clauseDiv.style.borderRadius = '6px';
+    clauseDiv.style.padding = '0.5em';
+    clauseDiv.style.marginBottom = '0.5em';
+
+    // Header (clickable)
+    const header = document.createElement('div');
+    header.style.cursor = 'pointer';
+    header.style.fontWeight = 'bold';
+    header.innerText = `Clause ${i + 1}`;
+
+    // Body (hidden initially)
+    const body = document.createElement('div');
+    body.style.display = 'none';
+    body.style.marginTop = '0.5em';
+
+    // Clause text
+    const p = document.createElement('p');
+    p.innerText = c;
+    body.appendChild(p);
+
+    // Insert button
+    const button = document.createElement('button');
+    button.innerText = 'Insert';
+    button.addEventListener('click', () => insertClause(c));
+    body.appendChild(button);
+
+    // Toggle body visibility when header clicked
+    header.addEventListener('click', () => {
+      body.style.display = body.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Assemble card
+    clauseDiv.appendChild(header);
+    clauseDiv.appendChild(body);
+    div.appendChild(clauseDiv);
+  });
+
+  output.appendChild(div);
+}
+
+  } else {
+    output.innerHTML = '<p>No results returned.</p>';
+  }
+}
+
+function insertClause(clauseText) {
+  google.script.run.insertClauseAtCursor(clauseText);
+}
+
+function escapeQuotes(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+</script>
