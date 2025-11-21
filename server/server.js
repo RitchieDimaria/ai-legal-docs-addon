@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/review", reviewRouter);
-app.use("/api/review", extractRouter);
+app.use("/api/extractContext", extractRouter);
 
 app.get("/ping", (req, res) => {
     res.status(200).send("pong");
