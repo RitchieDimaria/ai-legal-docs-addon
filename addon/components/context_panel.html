@@ -13,13 +13,20 @@
   async function refreshContext() {
     document.getElementById('context-results').innerHTML = "<p>Parsing...</p>";
     try {
-      const context = await google.script.run.withSuccessHandler(renderContext).runExtractContext();
+      const response = await google.script.run.withSuccessHandler(renderContext).runExtractContext();
+      console.log("Context extraction response:", response);
     } catch (err) {
       document.getElementById('context-results').innerHTML = `<p>Error: ${err}</p>`;
     }
   }
 
-  function renderContext(context) {
+  function renderContext(response) {
+    if (!response || response.success === false) {
+      document.getElementById('context-results').innerHTML = `<p>Error: ${response?.error || 'Unknown error'}</p>`;
+      return;
+    }
+
+    const context = response.data || {};
     let html = "";
 
     html += "<h3>Defined Terms</h3>";

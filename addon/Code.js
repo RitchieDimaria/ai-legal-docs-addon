@@ -16,7 +16,7 @@ function onInstall(e) {
  * Displays the sidebar UI
  */
 function showSidebar() {
-  const template = HtmlService.createTemplateFromFile('sidebar');
+  const template = HtmlService.createTemplateFromFile('components/sidebar/sidebar');
     var html = template.evaluate();
   DocumentApp.getUi().showSidebar(html);
 }

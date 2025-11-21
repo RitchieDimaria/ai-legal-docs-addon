@@ -2,7 +2,7 @@
 <html>
   <head>
     <base target="_top">
-    <?!= HtmlService.createHtmlOutputFromFile('sidebar_css').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('components/sidebar/sidebar_css').getContent(); ?>
   </head>
   <body>
     <h2>AI Legal Assistant</h2>
@@ -13,7 +13,7 @@
 
     <div id="reviewOutput"></div>
 
-    <?!= HtmlService.createHtmlOutputFromFile('sidebar_js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('components/sidebar/sidebar_js').getContent(); ?>
     <?!= HtmlService.createHtmlOutputFromFile('utils_js').getContent(); ?>
   </body>
 </html>

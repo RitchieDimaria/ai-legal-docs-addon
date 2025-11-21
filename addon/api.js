@@ -7,7 +7,7 @@ function callAIReview( documentText, context) {
 
   const payload = { documentText, context: context || {} };
 
-  const response = UrlFetchApp.fetch(`{url}/api/review`, {
+  const response = UrlFetchApp.fetch(`${url}/api/review`, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify(payload),
@@ -33,7 +33,7 @@ function callExtractContext(documentText) {
 
   const payload = { documentText};
 
-  const response = UrlFetchApp.fetch(`{url}/api/extractContext`, {
+  const response = UrlFetchApp.fetch(`${url}/api/extractContext`, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify(payload),

@@ -8,6 +8,8 @@ router.post("/", async (req, res) => {
   try {
     const { documentText } = req.body;
 
+    console.log("Extracting context from document, text length:", documentText?.length || 0);
+
     const systemPrompt = extractContextPrompt();
 
     const parsed = await fetchOpenAIChat({
@@ -18,14 +20,22 @@ router.post("/", async (req, res) => {
       model: "gpt-4o-mini",
     });
 
-    console.log(parsed.suggestedClauses);
+    console.log("Raw OpenAI response:", JSON.stringify(parsed, null, 2));
+
+    // Extract the expected fields from the parsed response
+    const contextData = {
+      definedTerms: parsed.definedTerms || parsed["Defined Terms"] || [],
+      parties: parsed.parties || parsed["Parties"] || null,
+      jurisdiction: parsed.jurisdiction || parsed["Governing Law / Jurisdiction"] || parsed["Governing Law"] || null,
+      docType: parsed.docType || parsed["Document Type"] || null,
+      headings: parsed.headings || parsed["Headings / Section Titles"] || parsed["Headings"] || []
+    };
+
+    console.log("Formatted context data:", JSON.stringify(contextData, null, 2));
+
     return res.json({
       success: true,
-      data: {
-        summary: parsed.summary || "",
-        issues: parsed.issues || [],
-        suggestedClauses: parsed.suggestedClauses || [],
-      },
+      data: contextData,
     });
   } catch (error) {
     console.error(

@@ -22,11 +22,11 @@ function insertClause(clauseText) {
   selection.getRangeElements().forEach(rangeElem => {
     const element = rangeElem.getElement();
     if (rangeElem.isPartial()) {
-      element.asText().deleteText(rangeElem.getStartOffset(), rangeElem.getEndOffset());
+      element.asText().deleteText(rangeElem.getStartOffset(), rangeElem.getEndOffsetInclusive());
       element.asText().insertText(rangeElem.getStartOffset(), clauseText);
     } else {
       const parent = element.getParent();
-      parent.insertParagraph(parent.getChildIndex(element) + 1, clauseText);
+      parent.asBody().insertParagraph(parent.getChildIndex(element) + 1, clauseText);
     }
   });
 }
