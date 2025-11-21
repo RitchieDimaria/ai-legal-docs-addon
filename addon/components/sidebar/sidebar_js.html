@@ -1,8 +1,12 @@
 <script>
   document.getElementById('reviewBtn').addEventListener('click', () => {
-  const jurisdiction = document.getElementById('jurisdiction').value;
   const output = document.getElementById('reviewOutput');
   output.innerHTML = '<p>Running AI review...</p>';
+
+  // Get the saved context from the context panel
+  const context = window.documentContext || {};
+  
+  console.log('Running review with context:', context);
 
   google.script.run
     .withSuccessHandler(res => {
@@ -15,7 +19,7 @@
     .withFailureHandler(err => {
       output.innerHTML = `<p style="color:red;">${err.message}</p>`;
     })
-    .runAIReview(jurisdiction);
+    .runAIReviewWithContext(context);
 });
 
 function renderResults(res) {

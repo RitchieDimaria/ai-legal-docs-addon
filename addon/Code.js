@@ -34,6 +34,19 @@ function runAIReview(jurisdiction) {
   }
 }
 
+/**
+ * Runs AI review with full context
+ */
+function runAIReviewWithContext(context) {
+  try {
+    const docText = getDocumentText();
+    validateInputs( docText);
+    return callAIReview( docText, context);
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
 function runExtractContext() {
   try {
     const docText = getDocumentText();
